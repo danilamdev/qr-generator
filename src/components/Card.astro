@@ -1,0 +1,81 @@
+---
+
+---
+
+<div class="bg-white px-4 pb-12 pt-6 rounded-3xl shadow-lg w-[28em] md:w-[500px]">
+	<picture class="mb-10 block" id="qr-container">
+		
+	</picture>
+
+	<div class="w-5/6 mx-auto">
+		<label for="qr-gen">
+			<h1 class="font-bold text-center text-2xl mb-4">QR generator</h1>
+			<h2 class="text-center">generate a qr-code for any website</h2>
+			
+			<form class="flex flex-col mt-5 gap-2" id="qr-form">
+			
+					<div id="form-div" class="flex items-center gap-2 mb-7">
+						<span class="text-zinc-400 m-0 p-0">url: </span>
+						<input type="text" name="qr-gen" id="qr-gen" placeholder="http://..." class="bg-slate-100/75 w-full placeholder:text-gray-300 rounded-sm block p-2 outline-blue-400/30">
+						<input type="button" value="clear" id="clearbtn" class="border border-slate-50 p-2 ml-4">
+			
+					</div>
+				<button class="shadow-md rounded-2xl mx-auto max-w-max px-6 py-4 cursor-pointer hover:scale-105 transition-transform">Show me the QR!</button>
+			</form>
+		</label>
+	</div>
+</div>
+
+<script>
+
+	const form : HTMLFormElement  = document.querySelector('#qr-form')
+	const qrContainer = document.querySelector('#qr-container')
+	const clearBtn : HTMLButtonElement = document.querySelector('#clearbtn')
+	const input :HTMLInputElement = document.querySelector('#qr-gen')
+	const formDiv :HTMLElement = document.querySelector('#form-div')
+
+	clearBtn.addEventListener('click', () => {
+		input.value = ''
+	})
+
+	form.addEventListener('submit', (e:FormDataEvent) => {
+		e.preventDefault()
+		let userInput : string = e.target[0].value
+
+		let urlCorrect = Boolean(userInput.match(/^https?:\/\/[a-z]*/))
+
+		if(!urlCorrect) {
+			formDiv.insertAdjacentHTML('afterend', '<small class="text-red-300 mt-[-30px]">no es correcta la URL</small>')
+			
+			setTimeout(() => {
+				form.removeChild(form.children[1])
+			}, 3000);
+
+			return
+		}
+
+		const url = new URL(userInput)
+
+		console.log('fetching')
+
+		fetch('/api/generate-qr', {
+			method: 'POST',
+			body: JSON.stringify({url : url.toString()}),
+			// mode: 'no-cors',
+			headers:{
+				'Content-type': 'application/json',
+			},
+			
+		})
+		.then(res =>{ 
+			console.log('res', res)
+			return res.json()})
+		.then(data => {
+			qrContainer.innerHTML = data.svg 
+		})
+
+	})
+</script>
+
+
+
