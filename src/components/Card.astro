@@ -17,10 +17,15 @@
 					<div id="form-div" class="flex items-center gap-2 mb-7">
 						<span class="text-zinc-400 m-0 p-0">url: </span>
 						<input type="text" name="qr-gen" id="qr-gen" placeholder="http://..." class="bg-slate-100/75 w-full placeholder:text-gray-300 rounded-sm block p-2 outline-blue-400/30">
-						<input type="button" value="clear" id="clearbtn" class="border border-slate-50 p-2 ml-4">
+						
+						
 			
 					</div>
-				<button class="shadow-md rounded-2xl mx-auto max-w-max px-6 py-4 cursor-pointer hover:scale-105 transition-transform">Show me the QR!</button>
+				<div class="flex gap-3 items-center">
+					<input type="button" value="clear" id="clearbtn" class="border border-slate-50 p-2 ml-4 cursor-pointer  hover:scale-105 transition-transform">
+					<button class="shadow-md rounded-2xl mx-auto max-w-max px-6 py-3 cursor-pointer hover:scale-105 transition-transform">Show me the QR!</button>
+					<input type="button" value="Paste" id="pastebtn" class="border border-slate-50 p-2 ml-4 cursor-pointer  hover:scale-105 transition-transform">
+				</div>
 			</form>
 		</label>
 	</div>
@@ -31,11 +36,18 @@
 	const form : HTMLFormElement  = document.querySelector('#qr-form')
 	const qrContainer = document.querySelector('#qr-container')
 	const clearBtn : HTMLButtonElement = document.querySelector('#clearbtn')
+	const pastebtn : HTMLButtonElement = document.querySelector('#pastebtn')
+
 	const input :HTMLInputElement = document.querySelector('#qr-gen')
 	const formDiv :HTMLElement = document.querySelector('#form-div')
 
 	clearBtn.addEventListener('click', () => {
 		input.value = ''
+	})
+
+	pastebtn.addEventListener('click', async ()=> {
+		const copyURL = await navigator.clipboard.readText()
+		input.value = copyURL
 	})
 
 	form.addEventListener('submit', (e:FormDataEvent) => {
